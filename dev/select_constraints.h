@@ -12,16 +12,21 @@ namespace sqlite_orm {
 
     namespace internal {
 
+        struct distinct_string {
+            operator std::string() const {
+                return "DISTINCT";
+            }
+        };
         /**
          *  DISCTINCT generic container.
          */
         template<class T>
-        struct distinct_t {
-            T t;
+        struct distinct_t : distinct_string {
+            using expression_type = T;
 
-            operator std::string() const {
-                return "DISTINCT";
-            }
+            expression_type expression;
+
+            distinct_t(expression_type expression_) : expression(std::move(expression_)) {}
         };
 
         /**

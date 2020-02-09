@@ -373,7 +373,7 @@ namespace sqlite_orm {
             template<class T>
             std::string string_from_expression(const distinct_t<T> &f, bool noTableName) const {
                 std::stringstream ss;
-                auto expr = this->string_from_expression(f.t, noTableName);
+                auto expr = this->string_from_expression(f.expression, noTableName);
                 ss << static_cast<std::string>(f) << "(" << expr << ") ";
                 return ss.str();
             }
@@ -457,7 +457,12 @@ namespace sqlite_orm {
                     }
                     ss << " ";
                 }
-                auto tableNamesSet = this->parse_table_name(sel.col);
+                std::set<std::pair<std::string, std::string>> tableNamesSet;
+                iterate_ast(sel.col, [this, &tableNamesSet](auto &node) {
+                    auto tableNames = this->parse_table_name(node);
+                    tableNamesSet.insert(tableNames.begin(), tableNames.end());
+                });
+                //                tableNamesSet = this->parse_table_name(sel.col);
                 internal::join_iterator<Args...>()([&tableNamesSet, this](const auto &c) {
                     using original_join_type = typename std::decay<decltype(c)>::type::join_type::type;
                     using cross_join_type = typename internal::mapped_type_proxy<original_join_type>::type;
@@ -1335,7 +1340,7 @@ namespace sqlite_orm {
                 return this->parse_table_name(a.arg);
             }
 
-            template<class R, class S, class... Args>
+            /*template<class R, class S, class... Args>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const core_functions::core_function_t<R, S, Args...> &f) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1344,19 +1349,19 @@ namespace sqlite_orm {
                     res.insert(tableNames.begin(), tableNames.end());
                 });
                 return res;
-            }
+            }*/
 
-            template<class T>
+            /*template<class T>
             std::set<std::pair<std::string, std::string>> parse_table_name(const distinct_t<T> &f) const {
                 return this->parse_table_name(f.t);
-            }
+            }*/
 
-            template<class T>
+            /*template<class T>
             std::set<std::pair<std::string, std::string>> parse_table_name(const all_t<T> &f) const {
                 return this->parse_table_name(f.t);
-            }
+            }*/
 
-            template<class L, class R, class... Ds>
+            /*template<class L, class R, class... Ds>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const binary_operator<L, R, Ds...> &f) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1365,7 +1370,7 @@ namespace sqlite_orm {
                 auto rightSet = this->parse_table_name(f.rhs);
                 res.insert(rightSet.begin(), rightSet.end());
                 return res;
-            }
+            }*/
 
             template<class T, class F>
             std::set<std::pair<std::string, std::string>> parse_table_name(const column_pointer<T, F> &) const {
@@ -1401,12 +1406,12 @@ namespace sqlite_orm {
                 return {std::make_pair(std::move(tableName), "")};
             }
 
-            template<class T, class E>
+            /*template<class T, class E>
             std::set<std::pair<std::string, std::string>> parse_table_name(const conditions::cast_t<T, E> &c) const {
                 return this->parse_table_name(c.expression);
-            }
+            }*/
 
-            template<class R, class T, class E, class... Args>
+            /*template<class R, class T, class E, class... Args>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const simple_case_t<R, T, E, Args...> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1425,9 +1430,9 @@ namespace sqlite_orm {
                     res.insert(tableNames.begin(), tableNames.end());
                 });
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::and_condition_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1436,9 +1441,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::or_condition_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1447,9 +1452,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::is_equal_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1458,9 +1463,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::is_not_equal_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1469,9 +1474,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::greater_than_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1480,9 +1485,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::greater_or_equal_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1491,9 +1496,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::lesser_than_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1502,9 +1507,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class L, class R>
+            /*template<class L, class R>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::lesser_or_equal_t<L, R> &c) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1513,9 +1518,9 @@ namespace sqlite_orm {
                 auto rightTableNames = this->parse_table_name(c.r);
                 res.insert(rightTableNames.begin(), rightTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class A, class T, class E>
+            /*template<class A, class T, class E>
             std::set<std::pair<std::string, std::string>> parse_table_name(const conditions::like_t<A, T, E> &l) const {
                 std::set<std::pair<std::string, std::string>> res;
                 auto argTableNames = this->parse_table_name(l.arg);
@@ -1527,9 +1532,9 @@ namespace sqlite_orm {
                     res.insert(escapeTableNames.begin(), escapeTableNames.end());
                 });
                 return res;
-            }
+            }*/
 
-            template<class A, class T>
+            /*template<class A, class T>
             std::set<std::pair<std::string, std::string>> parse_table_name(const conditions::glob_t<A, T> &l) const {
                 std::set<std::pair<std::string, std::string>> res;
                 auto argTableNames = this->parse_table_name(l.arg);
@@ -1537,20 +1542,20 @@ namespace sqlite_orm {
                 auto patternTableNames = this->parse_table_name(l.pattern);
                 res.insert(patternTableNames.begin(), patternTableNames.end());
                 return res;
-            }
+            }*/
 
-            template<class C>
+            /*template<class C>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const conditions::negated_condition_t<C> &c) const {
                 return this->parse_table_name(c.c);
-            }
+            }*/
 
-            template<class T, class E>
+            /*template<class T, class E>
             std::set<std::pair<std::string, std::string>> parse_table_name(const as_t<T, E> &a) const {
                 return this->parse_table_name(a.expression);
-            }
+            }*/
 
-            template<class... Args>
+            /*template<class... Args>
             std::set<std::pair<std::string, std::string>>
             parse_table_name(const internal::columns_t<Args...> &cols) const {
                 std::set<std::pair<std::string, std::string>> res;
@@ -1559,7 +1564,7 @@ namespace sqlite_orm {
                     res.insert(tableName.begin(), tableName.end());
                 });
                 return res;
-            }
+            }*/
 
             template<class F, class O, class... Args>
             std::string group_concat_internal(F O::*m, std::unique_ptr<std::string> y, Args &&... args) {

@@ -192,7 +192,6 @@ namespace sqlite_orm {
     /**
      *  Cute operators for core functions
      */
-
     template<class F,
              class R,
              typename = typename std::enable_if<
@@ -502,8 +501,8 @@ namespace sqlite_orm {
 
 #ifdef SQLITE_SOUNDEX
     /**
- *  SOUNDEX(X) function https://www.sqlite.org/lang_corefunc.html#soundex
- */
+     *  SOUNDEX(X) function https://www.sqlite.org/lang_corefunc.html#soundex
+     */
     template<class X>
     core_functions::core_function_t<std::string, core_functions::soundex_string, X> soundex(X x) {
         std::tuple<X> args{std::forward<X>(x)};

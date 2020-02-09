@@ -444,3 +444,34 @@ TEST_CASE("Where") {
     auto users6 = storage.get_all<User>(where((false or c(&User::id) == 4) and (false or c(&User::age) == 18)));
     REQUIRE(users6.empty());
 }
+
+TEST_CASE("select from two tables") {
+    /*struct Pattern {
+        std::string value;
+    };
+    struct Item {
+        int id = 0;
+        std::string attributes;
+    };
+    auto storage = make_storage({},
+                                make_table("patterns",
+                                           make_column("pattern", &Pattern::value)),
+                                make_table("items",
+                                           make_column("id", &Item::id, primary_key()),
+                                           make_column("attributes", &Item::attributes)));
+    storage.sync_schema();
+    
+    storage.replace(Item{1, "one"});
+    storage.replace(Item{2, "two"});
+    storage.replace(Item{3, "three"});
+    
+    std::vector<Pattern> patterns;
+    patterns.push_back({"n"});
+    patterns.push_back({"w"});
+    
+    storage.begin_transaction();
+    storage.insert_range(patterns.begin(), patterns.end());
+    auto ids = storage.select(&Item::id, where(like(&Item::attributes, &Pattern::value)));
+    auto items = storage.get_all<Item>(where(in(&Item::id, select(&Item::id, where(like(&Item::attributes, &Pattern::value))))));
+    storage.rollback();*/
+}
